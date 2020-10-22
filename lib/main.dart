@@ -90,6 +90,7 @@ class DetailScreen extends StatelessWidget {
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(user.name),
             Text(user.email),
