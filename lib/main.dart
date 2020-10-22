@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_users/models/user.dart';
+import 'package:flutter_users/user_service.dart';
 
 void main() {
   runApp(MyApp());
@@ -29,6 +32,23 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  var users = new List<User>();
+
+  _getUsers() {
+    UserService.getUsers().then((response) {
+      setState(() {
+        Iterable list = json.decode(response.body);
+        users = list.map((model) => User.fromJson(model)).toList();
+      });
+    });
+  }
+  initState() {
+    super.initState();
+    _getUsers();
+  }
+  dispose() {
+    super.dispose();
+  }
 
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,7 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
         itemCount: users.length,
         itemBuilder: (context, index) {
           return ListTile(
-            title: Text(users[index].title),
+            title: Text(users[index].username),
             onTap: () {
               Navigator.push(
                 context,
@@ -53,6 +73,30 @@ class _MyHomePageState extends State<MyHomePage> {
             },
           );
         },
+      ),
+    );
+  }
+}
+
+class DetailScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final User user = ModalRoute.of(context).settings.arguments;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(user.username),
+      ),
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Text(user.name),
+            Text(user.email),
+            Text(user.website),
+            Text(user.phone),
+          ],
+        ),
       ),
     );
   }
